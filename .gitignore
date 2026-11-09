@@ -1,0 +1,18 @@
+# Hasil build / kompilasi (tidak perlu di-commit)
+build/
+dist/
+*.class
+
+# File hasil NetBeans lokal
+nbproject/private/
+private/
+
+# File OS / editor
+.DS_Store
+Thumbs.db
+*.iml
+.idea/
+.vscode/
+
+# Log & temp
+*.log

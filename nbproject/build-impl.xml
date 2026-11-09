@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  build-impl.xml untuk project Java SE standar (NetBeans).
+  NetBeans akan me-regenerate file ini saat project dibuka;
+  versi ini disediakan agar project tetap bisa di-build dengan Ant secara mandiri.
+-->
+<project name="SistemPakarBayes-impl" default="jar" basedir="..">
+
+    <property environment="env"/>
+    <property name="src.dir" value="src"/>
+    <property name="test.src.dir" value="test"/>
+    <property name="build.dir" value="build"/>
+    <property name="build.classes.dir" value="${build.dir}/classes"/>
+    <property name="build.test.classes.dir" value="${build.dir}/test/classes"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="dist.jar" value="${dist.dir}/SistemPakarBayes.jar"/>
+    <property name="main.class" value="sistempakarbayes.Main"/>
+
+    <target name="init">
+        <mkdir dir="${build.classes.dir}"/>
+        <mkdir dir="${build.test.classes.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <target name="compile" depends="init">
+        <javac srcdir="${src.dir}" destdir="${build.classes.dir}"
+               encoding="UTF-8" source="17" target="17" includeantruntime="false"
+               debug="true" debuglevel="lines,vars,source"/>
+    </target>
+
+    <target name="compile-test" depends="compile">
+        <javac srcdir="${test.src.dir}" destdir="${build.test.classes.dir}"
+               encoding="UTF-8" source="17" target="17" includeantruntime="false"
+               classpath="${build.classes.dir}"/>
+    </target>
+
+    <target name="test" depends="compile-test">
+        <java classname="sistempakarbayes.UjiBayes" fork="true">
+            <classpath>
+                <pathelement path="${build.classes.dir}"/>
+                <pathelement path="${build.test.classes.dir}"/>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="jar" depends="compile">
+        <jar destfile="${dist.jar}" basedir="${build.classes.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main.class}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run" depends="jar">
+        <java jar="${dist.jar}" fork="true"/>
+    </target>
+
+</project>

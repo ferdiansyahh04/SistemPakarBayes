@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="SistemPakarBayes" default="default" basedir=".">
+    <description>Sistem Pakar Diagnosa Kerusakan Laptop - Teorema Bayes</description>
+    <import file="nbproject/build-impl.xml"/>
+</project>
