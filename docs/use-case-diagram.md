@@ -1,49 +1,37 @@
-# Use Case Diagram — Sistem Pakar Diagnosa Kerusakan Laptop
+# Use Case Diagram
+
+```mermaid
+graph LR
+    User((User)) --> UC1[Konsultasi / Diagnosa]
+    Admin((Admin)) --> UC2[Login]
+    Admin --> UC3[Kelola Kerusakan]
+    Admin --> UC4[Kelola Gejala]
+    Admin --> UC5[Kelola Nilai Aturan]
+    Admin --> UC6[Lihat Riwayat Konsultasi]
+    Admin --> UC7[Cetak Laporan]
+    Pakar((Pakar)) --> UC2
+    Pakar --> UC3
+    Pakar --> UC4
+    Pakar --> UC5
+    User --> UC2
+```
 
 ## Aktor
 
-| Aktor   | Deskripsi                                                              |
-|---------|------------------------------------------------------------------------|
-| User    | Pengguna umum yang berkonsultasi (memilih gejala dan melihat diagnosa).|
-| Admin   | Mengelola seluruh basis pengetahuan (kerusakan, gejala, nilai aturan). |
-| Pakar   | Validator data; login untuk meninjau/menyesuaikan nilai probabilitas.  |
+| Aktor | Deskripsi |
+|-------|-----------|
+| User  | Pengguna umum yang melakukan konsultasi diagnosa kerusakan laptop. |
+| Admin | Mengelola seluruh data master (kerusakan, gejala, nilai aturan) dan laporan. |
+| Pakar | Memvalidasi/memperbarui nilai probabilitas basis pengetahuan. |
 
-## Use Case
+## Deskripsi Use Case
 
-| ID   | Nama Use Case              | Aktor        | Deskripsi                                                                 |
-|------|----------------------------|--------------|---------------------------------------------------------------------------|
-| UC01 | Konsultasi Diagnosa        | User         | Memilih gejala, sistem menghitung Teorema Bayes, menampilkan hasil+solusi.|
-| UC02 | Login                       | Admin, Pakar | Otentikasi username & password (PBKDF2).                                  |
-| UC03 | Kelola Data Kerusakan      | Admin, Pakar | Tambah/ubah/hapus data kerusakan (prior & solusi).                        |
-| UC04 | Kelola Data Gejala         | Admin, Pakar | Tambah/ubah/hapus data gejala.                                            |
-| UC05 | Kelola Nilai Aturan        | Admin, Pakar | Isi/ubah nilai P(gejala|kerusakan) pada matriks.                          |
-| UC06 | Lihat Riwayat Konsultasi   | Admin, Pakar | Menampilkan daftar konsultasi yang tersimpan.                             |
-| UC07 | Cetak Laporan              | Admin, Pakar | Mencetak laporan riwayat konsultasi.                                      |
-| UC08 | Simpan Riwayat Konsultasi  | Sistem       | Otomatis menyimpan diagnosa ke database setelah konsultasi.               |
-
-## Diagram ASCII
-
-```
-                     +---------------------------+
-                     |      Sistem Pakar         |
-                     +---------------------------+
-                                    ^
-        (UC01 Konsultasi)            |            (UC02 Login)
-                                    |                 |
-+------+            +---------------+                 +---------------+
-| User |----------->|                                               |
-+------+            |               +---------------------------+  |
-                    |               |                           |  |
-        (UC02 Login)|               |    +----------------+     |  |
-+-------+           |               |    |  UC03 Kerusakan |     |  |
-| Admin |-----------+-------------->|    +----------------+     |<--+
-+-------+                           |    |  UC04 Gejala    |     |
-        |                           |    +----------------+     |
-+-------+ (UC02 Login)              |    |  UC05 Aturan    |     |
-| Pakar |--------------------------->    +----------------+     |
-+-------+                           |    |  UC06 Riwayat   |     |
-                                    |    +----------------+     |
-                                    |    |  UC07 Cetak     |     |
-                                    |    +----------------+     |
-                                    +---------------------------+
-```
+| Kode | Nama | Aktor | Deskripsi |
+|------|------|-------|-----------|
+| UC1 | Konsultasi / Diagnosa | User | Memilih gejala, sistem menghitung Teorema Bayes, menampilkan hasil + solusi. |
+| UC2 | Login | User, Admin, Pakar | Otentikasi username & password (PBKDF2-SHA256). |
+| UC3 | Kelola Kerusakan | Admin, Pakar | CRUD data kerusakan (kode, nama, prior, solusi). |
+| UC4 | Kelola Gejala | Admin, Pakar | CRUD data gejala (kode, nama). |
+| UC5 | Kelola Nilai Aturan | Admin, Pakar | Mengisi/mengubah nilai P(gejala|kerusakan). |
+| UC6 | Lihat Riwayat Konsultasi | Admin | Melihat daftar konsultasi yang tersimpan. |
+| UC7 | Cetak Laporan | Admin | Mencetak laporan riwayat konsultasi. |

@@ -1,112 +1,52 @@
-# Activity Diagram — Alur Diagnosa Teorema Bayes
+# Activity Diagram — Konsultasi Diagnosa
 
-## Deskripsi
-
-Diagram aktivitas menggambarkan alur konsultasi dari user memilih gejala hingga sistem menampilkan hasil akhir. Langkah perhitungan Bayes diperlihatkan sebagai sub-aktivitas.
-
-## Diagram ASCII
-
-```
-  [User buka aplikasi]
-          |
-          v
-  +---------------------+
-  | Pilih gejala dari   |
-  | daftar checkbox     |<--- (Reset: kosongkan)
-  +---------------------+
-          |
-          v
-     /------------\
-    < Ada dipilih? >-- Tidak --> [Tampilkan peringatan]
-     \------------/
-          | Ya
-          v
-  +---------------------+
-  | Minta nama user     |<--- (untuk riwayat konsultasi)
-  +---------------------+
-          |
-          v
-  +=====================+
-  = HITUNG TEOREMA BAYES=
-  +=====================+
-          |
-          v
-  +---------------------------+
-  | Untuk setiap kerusakan H: |
-  |   skor = P(H)             |
-  |   Untuk setiap gejala G:  |
-  |     P_E_H = P(G|H)        |
-  |     jika P_E_H < epsilon: |
-  |       P_E_H = epsilon     |   <-- Laplace smoothing
-  |     skor *= P_E_H         |
-  |   simpan skor(H)          |
-  +---------------------------+
-          |
-          v
-  +---------------------------+
-  | Normalisasi:              |
-  |   total = Σ skor(H)       |
-  |   P(H|E) = skor(H)/total  |
-  +---------------------------+
-          |
-          v
-  +---------------------------+
-  | Urutkan dari terbesar     |
-  | Ambil H1 = utama          |
-  +---------------------------+
-          |
-          v
-     /----------------\
-    < P(H1|E) >= 30%? >----- Tidak ---> [Tampilkan hasil + peringatan]
-     \----------------/                   "Keyakinan rendah"
-          | Ya
-          v
-  +---------------------------+
-  | Tampilkan hasil:          |
-  | - Ranking kerusakan (%)   |
-  | - Diagnosa utama + solusi |
-  +---------------------------+
-          |
-          v
-  +---------------------------+
-  | Simpan ke tabel           |
-  | konsultasi + detail       |
-  | gejala (otomatis)         |
-  +---------------------------+
-          |
-          v
-        [SELESAI]
+```mermaid
+flowchart TD
+    A[Mulai] --> B[Pilih gejala pada form]
+    B --> C{Klik Diagnosa}
+    C -->|tidak ada gejala| D[Tampilkan peringatan]
+    D --> B
+    C -->|ada gejala| E[Input nama user]
+    E --> F{Ada nama?}
+    F -->|batal| Z[Selesai]
+    F -->|lanjut| G[Hitung Teorema Bayes]
+    G --> H[Normalisasi hasil]
+    H --> I[Urutkan dari tertinggi]
+    I --> J[Ambil kerusakan utama]
+    J --> K{Keyakinan >= 30%?}
+    K -->|ya| L[Tampilkan hasil + solusi]
+    K -->|tidak| M[Tampilkan hasil + peringatan]
+    L --> N[Simpan ke tabel konsultasi]
+    M --> N
+    N --> Z
 ```
 
-## Flowchart Ringkas (untuk BAB III)
+## Activity Diagram — Login Admin
 
+```mermaid
+flowchart TD
+    A[Mulai] --> B[Input username & password]
+    B --> C[Verifikasi PBKDF2]
+    C --> D{Valid?}
+    D -->|tidak| E[Pesan: username/password salah]
+    E --> B
+    D -->|ya| F[Menu admin: Kerusakan / Gejala / Aturan / Riwayat]
+    F --> G{CRUD / kelola}
+    G --> H[Simpan perubahan ke MySQL]
+    H --> I[Refresh cache basis pengetahuan]
+    I --> F
+    F -->|tutup| Z[Selesai]
 ```
-Mulai
-  │
-  ▼
-Input: user memilih gejala G1..Gn
-  │
-  ▼
-Untuk setiap hipotesis Hi:
-  skor_i = P(Hi)                    ← prior
-  Untuk setiap gejala Gj:
-    nilai = P(Gj | Hi)              ← dari tabel aturan DB
-    jika nilai < ε maka nilai = ε   ← Laplace smoothing
-    skor_i = skor_i × nilai
-  │
-  ▼
-Normalisasi: P(Hi|Evidence) = skor_i / Σ skor_k
-  │
-  ▼
-Urutkan dari P terbesar → hasil[0] = diagnosa utama
-  │
-  ▼
-P(utama) ≥ 30%? → Ya: tampilkan + solusi
-                 → Tidak: tampilkan + peringatan
-  │
-  ▼
-Simpan riwayat konsultasi
-  │
-  ▼
-Selesai
+
+## Activity Diagram — Cetak Laporan
+
+```mermaid
+flowchart TD
+    A[Buka menu Riwayat] --> B[Load daftar konsultasi dari MySQL]
+    B --> C[Pratinjau laporan]
+    C --> D{OK?}
+    D -->|batal| Z[Selesai]
+    D -->|ok| E[Print dialog]
+    E --> F[Print ke printer]
+    F --> Z
 ```
