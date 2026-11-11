@@ -1,6 +1,9 @@
 package sistempakarbayes.engine;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import sistempakarbayes.data.BasisPengetahuan;
 import sistempakarbayes.model.Kerusakan;
 
@@ -13,8 +16,20 @@ import sistempakarbayes.model.Kerusakan;
  * Gejala diasumsikan saling bebas (naive), sehingga:
  *   skor(H) = P(H) * P(G1|H) * P(G2|H) * ... * P(Gn|H)
  *   lalu dinormalisasi agar total semua hipotesis = 1.0 (100%).
+ *
+ * Penanganan nilai nol (Laplace / additive smoothing):
+ *   Nilai P(gejala|kerusakan) yang nol (atau di bawah epsilon) diangkat ke
+ *   epsilon, supaya satu gejala dengan nilai 0 tidak otomatis menolkan
+ *   seluruh skor suatu hipotesis. Ini mencegah diagnosa "mati semua" saat
+ *   admin memasukkan nilai 0 di basis pengetahuan.
  */
 public class BayesEngine {
+
+    /** Ambang batas keyakinan diagnosa utama (30%). */
+    public static final double AMBANG_KEYAKINAN = 0.30;
+
+    /** Nilai minimum (epsilon) untuk Laplace smoothing. */
+    private static final double EPSILON = 0.001;
 
     /**
      * Hitung probabilitas setiap kerusakan berdasarkan gejala terpilih.
@@ -25,11 +40,11 @@ public class BayesEngine {
     public static Map<String, Double> diagnosa(List<String> gejalaTerpilih) {
         Map<String, Double> skor = new LinkedHashMap<>();
 
-        // Hitung skor = prior * hasil kali likelihood tiap gejala
+        // Hitung skor = prior * hasil kali likelihood tiap gejala (dengan smoothing)
         for (Kerusakan k : BasisPengetahuan.getSemuaKerusakan()) {
             double nilai = k.getPrior();
             for (String g : gejalaTerpilih) {
-                nilai *= BasisPengetahuan.getProbabilitas(g, k.getKode());
+                nilai *= smooth(BasisPengetahuan.getProbabilitas(g, k.getKode()));
             }
             skor.put(k.getKode(), nilai);
         }
@@ -54,5 +69,38 @@ public class BayesEngine {
             terurut.put(e.getKey(), e.getValue());
         }
         return terurut;
+    }
+
+    /**
+     * Laplace smoothing: nilai nol (atau mendekati nol) diangkat ke EPSILON
+     * agar tidak menolkan seluruh skor hipotesis.
+     */
+    private static double smooth(double nilai) {
+        return nilai < EPSILON ? EPSILON : nilai;
+    }
+
+    /**
+     * Ambil kode kerusakan dengan probabilitas tertinggi.
+     * Mengembalikan null bila hasil kosong.
+     */
+    public static String kodeUtama(Map<String, Double> hasil) {
+        if (hasil == null || hasil.isEmpty()) return null;
+        return hasil.entrySet().iterator().next().getKey();
+    }
+
+    /**
+     * Ambil nilai keyakinan tertinggi.
+     * Mengembalikan 0.0 bila hasil kosong.
+     */
+    public static double nilaiUtama(Map<String, Double> hasil) {
+        if (hasil == null || hasil.isEmpty()) return 0.0;
+        return hasil.entrySet().iterator().next().getValue();
+    }
+
+    /**
+     * Apakah diagnosa cukup meyakinkan (di atas ambang batas)?
+     */
+    public static boolean meyakinkan(double nilai) {
+        return nilai >= AMBANG_KEYAKINAN;
     }
 }
