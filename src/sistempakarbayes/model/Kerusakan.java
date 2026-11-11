@@ -20,4 +20,9 @@ public class Kerusakan {
     public String getNama()   { return nama; }
     public double getPrior()  { return prior; }
     public String getSolusi() { return solusi; }
+
+    public void setKode(String kode)     { this.kode = kode; }
+    public void setNama(String nama)     { this.nama = nama; }
+    public void setPrior(double prior)   { this.prior = prior; }
+    public void setSolusi(String solusi) { this.solusi = solusi; }
 }

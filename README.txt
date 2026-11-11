@@ -41,6 +41,11 @@ PERSIAPAN DATABASE (sebelum pertama kali run)
 4. Sesuaikan kredensial di src/sistempakarbayes/data/Database.java
    bila host/user/password berbeda.
 
+LOGIN ADMIN (untuk kelola data)
+- Buka aplikasi, klik menu "Menu" -> "Login Admin / Kelola Data".
+- Username: admin   Password: admin123  (role: admin)
+- Username: pakar   Password: pakar123  (role: pakar)
+
 FILE PENTING
 - src/sistempakarbayes/Main.java
   Entry point aplikasi.
@@ -48,20 +53,38 @@ FILE PENTING
   Model kode kerusakan, prior P(H), dan solusi.
 - src/sistempakarbayes/model/Gejala.java
   Model gejala.
+- src/sistempakarbayes/model/User.java
+  Model pengguna (admin/pakar).
 - src/sistempakarbayes/data/Database.java
   Konfigurasi koneksi JDBC (host, user, password).
 - src/sistempakarbayes/data/BasisPengetahuanDAO.java
   Akses basis pengetahuan dari MySQL.
 - src/sistempakarbayes/data/BasisPengetahuan.java
   Facade + cache data pakar (5 kerusakan, 8 gejala, aturan).
+- src/sistempakarbayes/data/KerusakanDAO.java
+  CRUD kerusakan.
+- src/sistempakarbayes/data/GejalaDAO.java
+  CRUD gejala.
+- src/sistempakarbayes/data/AturanDAO.java
+  CRUD nilai aturan P(gejala|kerusakan).
+- src/sistempakarbayes/util/PasswordUtils.java
+  Hashing password PBKDF2-SHA256.
 - src/sistempakarbayes/engine/BayesEngine.java
   Perhitungan Teorema Bayes dan normalisasi hasil.
 - src/sistempakarbayes/ui/MainFrame.java
-  GUI pemilihan gejala.
+  GUI pemilihan gejala (menu login admin di menu bar).
+- src/sistempakarbayes/ui/LoginDialog.java
+  Dialog login admin/pakar.
 - src/sistempakarbayes/ui/HasilDiagnosaDialog.java
   GUI hasil diagnosa dan solusi.
+- src/sistempakarbayes/ui/admin/AdminFrame.java
+  Jendela admin (tab kerusakan, gejala, nilai aturan).
 - test/sistempakarbayes/UjiBayes.java
-  Pengujian perhitungan melalui console (membaca dari MySQL).
+  Pengujian perhitungan (membaca dari MySQL).
+- test/sistempakarbayes/UjiAdmin.java
+  Pengujian login + CRUD.
+- test/sistempakarbayes/SmokeGui.java & SmokeAdmin.java
+  Smoke test GUI (menangkap screenshot).
 - sql/schema.sql
   Skema database (tabel user, kerusakan, gejala, aturan, konsultasi).
 - sql/seed_data.sql & sql/seed_aturan.sql

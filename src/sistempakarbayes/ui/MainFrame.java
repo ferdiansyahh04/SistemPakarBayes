@@ -12,6 +12,9 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -19,6 +22,8 @@ import javax.swing.SwingUtilities;
 import sistempakarbayes.data.BasisPengetahuan;
 import sistempakarbayes.engine.BayesEngine;
 import sistempakarbayes.model.Gejala;
+import sistempakarbayes.model.User;
+import sistempakarbayes.ui.admin.AdminFrame;
 
 /**
  * Form utama: user mencentang gejala, lalu menekan tombol Diagnosa.
@@ -33,6 +38,15 @@ public class MainFrame extends JFrame {
         setSize(560, 480);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
+
+        // Menu bar: akses login admin
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menuFile = new JMenu("Menu");
+        JMenuItem miAdmin = new JMenuItem("Login Admin / Kelola Data");
+        miAdmin.addActionListener(e -> bukaLoginAdmin());
+        menuFile.add(miAdmin);
+        menuBar.add(menuFile);
+        setJMenuBar(menuBar);
 
         // Header
         JLabel lblJudul = new JLabel("Pilih Gejala yang Dialami Laptop Anda:", JLabel.CENTER);
@@ -67,6 +81,15 @@ public class MainFrame extends JFrame {
         btnReset.addActionListener(e -> {
             for (JCheckBox cb : mapCheckKeKode.keySet()) cb.setSelected(false);
         });
+    }
+
+    private void bukaLoginAdmin() {
+        LoginDialog dialog = new LoginDialog(this);
+        dialog.setVisible(true);
+        User user = dialog.getUser();
+        if (user != null) {
+            new AdminFrame(user).setVisible(true);
+        }
     }
 
     private void prosesDiagnosa() {

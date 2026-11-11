@@ -7,7 +7,7 @@ USE sistem_pakar;
 -- Admin / pakar
 INSERT INTO user (username, password, nama, role) VALUES
 ('admin', '10000:a1b2c3d4e5f60718293a4b5c6d7e8f90:bfacd14cb736c70b012d89d766b455864f193d232ed1c3d1b27c472e4ca3f224', 'Administrator', 'admin'),
-('pakar', '10000:a1b2c3d4e5f60718293a4b5c6d7e8f90:bfacd14cb736c70b012d89d766b455864f193d232ed1c3d1b27c472e4ca3f224', 'Pakar Komputer', 'pakar');
+('pakar', '10000:f0e1d2c3b4a5968778695a4b3c2d1e0f:f06ac3fb34758a444c01a99dfd033321bbcac35fcb9c106f7f0e402d95936deb', 'Pakar Komputer', 'pakar');
 
 -- Kerusakan (hipotesis) + prior P(H)
 INSERT INTO kerusakan (kode, nama, prior, solusi) VALUES
