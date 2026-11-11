@@ -20,10 +20,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import sistempakarbayes.data.BasisPengetahuan;
+import sistempakarbayes.data.KonsultasiDAO;
 import sistempakarbayes.engine.BayesEngine;
 import sistempakarbayes.model.Gejala;
 import sistempakarbayes.model.User;
 import sistempakarbayes.ui.admin.AdminFrame;
+import sistempakarbayes.ui.admin.RiwayatPanel;
 
 /**
  * Form utama: user mencentang gejala, lalu menekan tombol Diagnosa.
@@ -39,11 +41,14 @@ public class MainFrame extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
 
-        // Menu bar: akses login admin
+        // Menu bar: akses login admin + riwayat
         JMenuBar menuBar = new JMenuBar();
         JMenu menuFile = new JMenu("Menu");
         JMenuItem miAdmin = new JMenuItem("Login Admin / Kelola Data");
         miAdmin.addActionListener(e -> bukaLoginAdmin());
+        JMenuItem miRiwayat = new JMenuItem("Riwayat Konsultasi");
+        miRiwayat.addActionListener(e -> RiwayatPanel.tampilDalamDialog(this));
+        menuFile.add(miRiwayat);
         menuFile.add(miAdmin);
         menuBar.add(menuFile);
         setJMenuBar(menuBar);
@@ -108,6 +113,25 @@ public class MainFrame extends JFrame {
         }
 
         Map<String, Double> hasil = BayesEngine.diagnosa(terpilih);
+
+        // Simpan riwayat konsultasi
+        String nama = JOptionPane.showInputDialog(this,
+                "Nama Anda (untuk riwayat konsultasi):",
+                "Identitas", JOptionPane.QUESTION_MESSAGE);
+        if (nama == null) return; // user batal
+        nama = nama.trim();
+        if (nama.isEmpty()) nama = "Tanpa Nama";
+
+        String kodeUtama = hasil.entrySet().iterator().next().getKey();
+        double nilaiUtama = hasil.entrySet().iterator().next().getValue();
+        try {
+            KonsultasiDAO.simpan(nama, kodeUtama, nilaiUtama, terpilih);
+        } catch (RuntimeException ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Gagal menyimpan riwayat: " + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
         new HasilDiagnosaDialog(this, hasil).setVisible(true);
     }
 

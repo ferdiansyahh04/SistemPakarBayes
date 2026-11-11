@@ -33,6 +33,7 @@ public class AdminFrame extends JFrame {
         tabs.addTab("Kerusakan", new KerusakanPanel());
         tabs.addTab("Gejala", new GejalaPanel());
         tabs.addTab("Nilai Aturan (Pakar)", new AturanPanel());
+        tabs.addTab("Riwayat", new RiwayatPanel());
         add(tabs, BorderLayout.CENTER);
 
         JPanel footer = new JPanel();
