@@ -1,5 +1,55 @@
 # ERD (Entity Relationship Diagram) — Sistem Pakar Diagnosa Kerusakan Laptop
 
+```mermaid
+erDiagram
+    user {
+        int id PK
+        varchar username UK
+        varchar password
+        varchar nama
+        enum role
+    }
+
+    kerusakan {
+        varchar kode PK
+        varchar nama
+        double prior
+        text solusi
+    }
+
+    gejala {
+        varchar kode PK
+        varchar nama
+    }
+
+    aturan {
+        int id PK
+        varchar kode_gejala FK
+        varchar kode_kerusakan FK
+        double nilai
+    }
+
+    konsultasi {
+        int id PK
+        varchar nama_user
+        datetime tanggal
+        varchar hasil_kode FK
+        double hasil_nilai
+    }
+
+    detail_konsultasi {
+        int id PK
+        int id_konsultasi FK
+        varchar kode_gejala FK
+    }
+
+    kerusakan ||--o{ aturan : "memiliki nilai"
+    gejala ||--o{ aturan : "memiliki nilai"
+    kerusakan ||--o{ konsultasi : "hasil diagnosa"
+    konsultasi ||--o{ detail_konsultasi : "terdiri dari"
+    gejala ||--o{ detail_konsultasi : "dipilih"
+```
+
 ## Entitas & Relasi
 
 | Tabel              | Relasi                                    | Keterangan                                    |
@@ -10,45 +60,6 @@
 | aturan             | M:1 kerusakan, M:1 gejala                | Nilai P(gejala\|kerusakan) — tabel pivot.     |
 | konsultasi         | M:1 kerusakan (hasil_kode, boleh null)   | Hasil diagnosa utama tiap konsultasi.         |
 | detail_konsultasi  | M:1 konsultasi, M:1 gejala               | Gejala yang dipilih pada tiap konsultasi.     |
-
-## Diagram ASCII
-
-```
-+----------+                +----------------+
-|   user   |                |   kerusakan    |
-+----------+                +----------------+
-| id PK    |                | kode PK        |
-| username |                | nama           |
-| password |                | prior P(H)     |
-| nama     |                | solusi         |
-| role     |                +----------------+
-+----------+                       | 1
-                                   |
-                                   | M
-+----------+          +----------------+         +-------------+
-|  gejala  | 1       M |     aturan     | M     1 | kerusakan   |
-+----------+<--------->+----------------+<------->+-------------+
-| kode PK  |           | id PK          |         | (lihat atas)|
-| nama     |           | kode_gejala FK |         +-------------+
-+----------+           | kode_kerusakan FK|
-  | 1                   | nilai (0..1)   |
-  | M                   +----------------+
-  |
-  v
-+-------------------+
-| detail_konsultasi |
-+-------------------+
-| id PK             |
-| id_konsultasi FK  |---------> +----------------+
-| kode_gejala FK    |           |   konsultasi   |
-+-------------------+           +----------------+
-                                | id PK          |
-                                | nama_user      |
-                                | tanggal        |
-                                | hasil_kode FK  |---------> kerusakan
-                                | hasil_nilai    |
-                                +----------------+
-```
 
 ## Catatan Kardinalitas
 
