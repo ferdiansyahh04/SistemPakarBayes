@@ -9,12 +9,21 @@
     <property environment="env"/>
     <property name="src.dir" value="src"/>
     <property name="test.src.dir" value="test"/>
+    <property name="lib.dir" value="lib"/>
     <property name="build.dir" value="build"/>
     <property name="build.classes.dir" value="${build.dir}/classes"/>
     <property name="build.test.classes.dir" value="${build.dir}/test/classes"/>
     <property name="dist.dir" value="dist"/>
     <property name="dist.jar" value="${dist.dir}/SistemPakarBayes.jar"/>
     <property name="main.class" value="sistempakarbayes.Main"/>
+
+    <!-- Konektor MySQL agar bisa di-build/dijalankan mandiri -->
+    <property name="file.reference.mysql-connector-j-8.4.0.jar"
+              value="${lib.dir}/mysql-connector-j-8.4.0.jar"/>
+
+    <path id="javac.classpath">
+        <pathelement path="${file.reference.mysql-connector-j-8.4.0.jar}"/>
+    </path>
 
     <target name="init">
         <mkdir dir="${build.classes.dir}"/>
@@ -30,18 +39,25 @@
     <target name="compile" depends="init">
         <javac srcdir="${src.dir}" destdir="${build.classes.dir}"
                encoding="UTF-8" source="17" target="17" includeantruntime="false"
-               debug="true" debuglevel="lines,vars,source"/>
+               debug="true" debuglevel="lines,vars,source">
+            <classpath refid="javac.classpath"/>
+        </javac>
     </target>
 
     <target name="compile-test" depends="compile">
         <javac srcdir="${test.src.dir}" destdir="${build.test.classes.dir}"
-               encoding="UTF-8" source="17" target="17" includeantruntime="false"
-               classpath="${build.classes.dir}"/>
+               encoding="UTF-8" source="17" target="17" includeantruntime="false">
+            <classpath>
+                <path refid="javac.classpath"/>
+                <pathelement path="${build.classes.dir}"/>
+            </classpath>
+        </javac>
     </target>
 
     <target name="test" depends="compile-test">
         <java classname="sistempakarbayes.UjiBayes" fork="true">
             <classpath>
+                <path refid="javac.classpath"/>
                 <pathelement path="${build.classes.dir}"/>
                 <pathelement path="${build.test.classes.dir}"/>
             </classpath>
@@ -52,12 +68,18 @@
         <jar destfile="${dist.jar}" basedir="${build.classes.dir}">
             <manifest>
                 <attribute name="Main-Class" value="${main.class}"/>
+                <attribute name="Class-Path" value="lib/mysql-connector-j-8.4.0.jar"/>
             </manifest>
         </jar>
     </target>
 
     <target name="run" depends="jar">
-        <java jar="${dist.jar}" fork="true"/>
+        <java jar="${dist.jar}" fork="true">
+            <classpath>
+                <pathelement path="${dist.jar}"/>
+                <pathelement path="${lib.dir}/mysql-connector-j-8.4.0.jar"/>
+            </classpath>
+        </java>
     </target>
 
 </project>
