@@ -67,10 +67,12 @@ FILE PENTING
   CRUD gejala.
 - src/sistempakarbayes/data/AturanDAO.java
   CRUD nilai aturan P(gejala|kerusakan).
+- src/sistempakarbayes/data/KonsultasiDAO.java
+  Simpan/baca/hapus riwayat konsultasi.
 - src/sistempakarbayes/util/PasswordUtils.java
   Hashing password PBKDF2-SHA256.
 - src/sistempakarbayes/engine/BayesEngine.java
-  Perhitungan Teorema Bayes dan normalisasi hasil.
+  Teorema Bayes + Laplace smoothing + confidence threshold.
 - src/sistempakarbayes/ui/MainFrame.java
   GUI pemilihan gejala (menu login admin di menu bar).
 - src/sistempakarbayes/ui/LoginDialog.java
@@ -83,12 +85,20 @@ FILE PENTING
   Pengujian perhitungan (membaca dari MySQL).
 - test/sistempakarbayes/UjiAdmin.java
   Pengujian login + CRUD.
+- test/sistempakarbayes/UjiMesin.java
+  Pengujian Laplace smoothing + confidence threshold.
+- test/sistempakarbayes/UjiKonsultasi.java
+  Pengujian riwayat konsultasi.
+- test/sistempakarbayes/UjiAkurasi.java
+  Pengujian akurasi diagnosa vs pakar (15 kasus, akurasi 100%).
 - test/sistempakarbayes/SmokeGui.java & SmokeAdmin.java
   Smoke test GUI (menangkap screenshot).
 - sql/schema.sql
   Skema database (tabel user, kerusakan, gejala, aturan, konsultasi).
 - sql/seed_data.sql & sql/seed_aturan.sql
-  Data awal pakar.
+  Data pakar: 10 kerusakan, 16 gejala, 160 aturan.
+- scripts/generate_seed_aturan.py
+  Generator matriks aturan P(gejala|kerusakan).
 
 RUMUS
 P(H|E) = P(E|H) x P(H) / jumlah P(E|Hj) x P(Hj)
@@ -98,6 +108,6 @@ skor(H) = P(H) x P(G1|H) x P(G2|H) x ... x P(Gn|H)
 Posterior = skor(H) / total seluruh skor hipotesis.
 
 PENGEMBANGAN BERIKUTNYA
-- Tambahkan form login admin.
-- Tambahkan CRUD kerusakan, gejala, nilai probabilitas, dan solusi.
-- Tambahkan riwayat konsultasi dan cetak laporan hasil diagnosa.
+- Sinkronisasi basis pengetahuan ke sumber data eksternal/API.
+- Laporan hasil diagnosa dalam format PDF.
+- Multi-user dengan pembatasan hak akses per role yang lebih granular.

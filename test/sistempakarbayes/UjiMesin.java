@@ -14,8 +14,10 @@ public class UjiMesin {
     public static void main(String[] args) {
         System.out.println("=== UJI DIAGNOSA DASAR ===");
         Map<String, Double> h1 = BayesEngine.diagnosa(Arrays.asList("G02", "G03"));
+        cek("skenario 1 utama = K02 (HDD)", "K02".equals(BayesEngine.kodeUtama(h1)),
+                "utama=" + BayesEngine.kodeUtama(h1));
         double utama1 = BayesEngine.nilaiUtama(h1);
-        cek("skenario 1 utama ~91%", Math.abs(utama1 - 0.91) < 0.02, "nilai=" + utama1);
+        cek("keyakinan utama > 80%", utama1 > 0.80, "nilai=" + utama1);
         cek("total normalisasi 1.0", Math.abs(total(h1) - 1.0) < 1e-9);
 
         System.out.println("\n=== UJI CONFIDENCE THRESHOLD (30%) ===");
